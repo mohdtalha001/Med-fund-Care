@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Hero Banner -->
+<div class="hero-bg py-5 text-center">
+    <div class="container">
+        <h1 class="fw-bold lang-en">Support Medical Treatment & Save Lives</h1>
+        <h1 class="fw-bold lang-hi" style="display:none;">इलाज के लिए सहायता करें और जान बचाएं</h1>
+        <h1 class="fw-bold lang-ur rtl-text" style="display:none;">علاج کے لیے مدد کریں اور زندگیاں بچائیں</h1>
+        <p class="lead">Direct support to verified medical patients globally.</p>
+    </div>
+</div>
+
+<!-- Patient Cards Container -->
+<div class="container my-5">
+    <div class="row g-4">
+        {% for c in campaigns %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-custom h-100 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-success">Verified Patient</span>
+                    <small class="text-muted">ID: #00{{ c.id }}</small>
+                </div>
+
+                <!-- Disease Title -->
+                <h4 class="text-primary fw-bold lang-en">{{ c.disease_en }}</h4>
+                <h4 class="text-primary fw-bold lang-hi" style="display:none;">{{ c.disease_hi }}</h4>
+                <h4 class="text-primary fw-bold lang-ur rtl-text" style="display:none;">{{ c.disease_ur }}</h4>
+
+                <p class="text-muted small mb-1"><strong>Patient:</strong> {{ c.patient_name }}</p>
+                <p class="card-text">{{ c.description[:100] }}...</p>
+
+                <!-- Live Progress Bar -->
+                <div class="my-3">
+                    <div class="d-flex justify-content-between mb-1 small fw-bold">
+                        <span>Raised: ₹{{ c.raised_amount }}</span>
+                        <span>Goal: ₹{{ c.target_amount }}</span>
+                    </div>
+                    <div class="progress" style="height: 12px;">
+                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" data-width="{{ c.progress_percentage }}"></div>
+                    </div>
+                    <small class="text-end d-block text-success fw-bold mt-1">{{ c.progress_percentage }}% Completed</small>
+                </div>
+
+                <!-- Action Button -->
+                <button class="btn btn-primary w-100 fw-bold mt-auto" data-bs-toggle="modal" data-bs-target="#donateModal{{ c.id }}">
+                    🇮🇳 / 🌍 Donate Now (दान करें)
+                </button>
+            </div>
+        </div>
+
+        <!-- Payment Modal with Dynamic UPI QR & International Options -->
+        <div class="modal fade" id="donateModal{{ c.id }}" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">Help {{ c.patient_name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="/donate/{{ c.id }}" method="POST">
+                        <div class="modal-body">
+                            
+                            <!-- 🇮🇳 India Payment: Dynamic QR Code -->
+                            {% if c.upi_id %}
+                            <div class="text-center p-3 mb-3 bg-light rounded border">
+                                <span class="badge bg-primary mb-2">🇮🇳 India UPI Payment</span>
+                                <h6 class="fw-bold text-success mb-2">Scan & Pay via Paytm / PhonePe / GPay</h6>
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa={{ c.upi_id }}%26pn={{ c.account_holder }}" alt="Patient UPI QR" class="img-thumbnail shadow-sm mb-2">
+                                <p class="mb-0 text-muted small"><strong>UPI ID:</strong> {{ c.upi_id }}</p>
+                            </div>
+                            {% endif %}
+
+                            <!-- 🌍 International Payment Option (PayPal & Credit/Debit Card) -->
+                            <div class="p-3 mb-3 bg-light rounded border text-center">
+                                <span class="badge bg-warning text-dark mb-2">🌍 International Payment (Outside India)</span>
+                                <p class="small text-muted mb-2">Pay securely using International Credit / Debit Card or PayPal</p>
+                                <a href="https://www.paypal.com/paypalme/syedmohdtalha" target="_blank" class="btn btn-primary btn-sm w-100 fw-bold">
+                                    <i class="fa-brands fa-paypal"></i> Pay via PayPal / Global Credit Card
+                                </a>
+                            </div>
+
+                            <!-- Bank Details for Wire Transfer -->
+                            <h6 class="fw-bold">Direct Bank Account Details:</h6>
+                            <div class="bg-light p-2 rounded mb-3 small border">
+                                <p class="mb-1"><strong>Bank Holder:</strong> {{ c.account_holder }}</p>
+                                <p class="mb-1"><strong>Account No:</strong> {{ c.account_number }}</p>
+                                <p class="mb-1"><strong>IFSC Code:</strong> {{ c.ifsc_code }}</p>
+                                <p class="mb-0 text-secondary"><strong>SWIFT Code (International Wire):</strong> CBININBBXXX</p>
+                            </div>
+
+                            <label class="form-label fw-bold">Enter Donated Amount (₹ / $):</label>
+                            <input type="number" name="amount" class="form-control mb-3" placeholder="e.g. 500" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success w-100 fw-bold">Confirm & Submit Donation</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.progress-bar').forEach(bar => {
+        let w = bar.getAttribute('data-width');
+        if (w) { bar.style.width = w + '%'; }
+    });
+</script>
+{% endblock %}
