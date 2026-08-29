@@ -13,6 +13,8 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
+with app.app_context():
+    db.create_all()
 
 # Database Model
 class Campaign(db.Model):
@@ -77,7 +79,7 @@ def create():
         db.session.add(new_campaign)
         db.session.commit()
             return redirect(url_for('index'))
-        return render_template('create_campaign.html')
+        return "CREATE PAGE WORKING FINE"
     @app.route('/donate/<int:id>', methods=['POST'])
     def donate(id):
         campaign = Campaign.query.get_or_404(id)
