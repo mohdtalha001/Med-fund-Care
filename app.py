@@ -76,7 +76,7 @@ def create():
         )
         db.session.add(new_campaign)
         db.session.commit()
-        return redirect(url_for('index'))
+            return redirect(url_for('index'))
         return render_template('create_campaign.html')
     @app.route('/donate/<int:id>', methods=['POST'])
     def donate(id):
