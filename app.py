@@ -77,6 +77,15 @@ def create():
         db.session.add(new_campaign)
         db.session.commit()
         return redirect(url_for('index'))
+             return render_template('create_campaign.html')
+    @app.route('/donate/<int:id>', methods=['POST'])
+    def donate(id):
+        campaign = Campaign.query.get_or_404(id)
+        amount = float(request.form.get('amount', 0))
+        campaign.raised_amount += amount
+        db.session.commit()
+        return redirect(url_for('index'))
+
    
 
        
