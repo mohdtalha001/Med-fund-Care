@@ -83,8 +83,7 @@ def create():
         return render_template('create_campaign.html')
     except Exception as e:
         return f"Template Error: {str(e)}"
-       
-    @app.route('/donate/<int:id>', methods=['GET', 'POST'])
+@app.route('/donate/<int:id>', methods=['GET', 'POST'])
 def donate(id):
     campaign = Campaign.query.get_or_404(id)
     if request.method == 'POST':
