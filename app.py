@@ -68,7 +68,7 @@ def create():
             disease_en=disease_en,
             disease_hi=disease_hi,
             disease_ur=disease_ur,
-            description=description,.
+            description=description,
             target_amount=target_amount,
             account_holder=account_holder,
             account_number=account_number,
