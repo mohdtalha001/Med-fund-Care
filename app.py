@@ -84,13 +84,21 @@ def create():
     except Exception as e:
         return f"Template Error: {str(e)}"
        
-    @app.route('/donate/<int:id>', methods=['POST'])
-    def donate(id):
-        campaign = Campaign.query.get_or_404(id)
-        amount = float(request.form.get('amount', 0))
+    @app.route('/donate/<int:id>', methods=['GET', 'POST'])
+def donate(id):
+    campaign = Campaign.query.get_or_404(id)
+    if request.method == 'POST':
+        raw_amount = request.form.get('amount', '0')
+        try:
+            amount = float(raw_amount) if raw_amount else 0.0
+        except ValueError:
+            amount = 0.0
+
         campaign.raised_amount += amount
         db.session.commit()
         return redirect(url_for('index'))
+    
+    return redirect(url_for('index'))
 
    
 
