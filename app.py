@@ -79,7 +79,11 @@ def create():
         db.session.add(new_campaign)
         db.session.commit()
         return redirect(url_for('index'))
-       return render_template('create_campaign.html')
+    try:
+        return render_template('create_campaign.html')
+    except Exception as e:
+        return f"Template Error: {str(e)}"
+       
     @app.route('/donate/<int:id>', methods=['POST'])
     def donate(id):
         campaign = Campaign.query.get_or_404(id)
