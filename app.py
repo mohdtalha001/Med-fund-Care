@@ -51,25 +51,25 @@ def create():
         disease_hi = request.form.get('disease_hi')
         disease_ur = request.form.get('disease_ur')
         description = request.form.get('description')
-        target_amount = request.form.get('target_amount')
+        target_amount = float(request.form.get('target_amount') if request.form.get('target_amount') else 0.0)
         account_holder = request.form.get('account_holder')
         account_number = request.form.get('account_number')
         ifsc_code = request.form.get('ifsc_code')
         upi_id = request.form.get('upi_id')
-
-        file = request.files.get('document_file')
+        
         filename = ''
-        if file and file.filename != '':
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        if 'document_file' in request.files:
+            file = request.files['document_file']
+            if file and file.filename != '':
+                filename = file.filename
 
         new_campaign = Campaign(
             patient_name=patient_name,
             disease_en=disease_en,
             disease_hi=disease_hi,
             disease_ur=disease_ur,
-            description=description,
-            target_amount=float(target_amount) if target_amount else 0.0,
+            description=description,.
+            target_amount=target_amount,
             account_holder=account_holder,
             account_number=account_number,
             ifsc_code=ifsc_code,
@@ -78,8 +78,8 @@ def create():
         )
         db.session.add(new_campaign)
         db.session.commit()
-            return redirect(url_for('index'))
-        return "CREATE PAGE WORKING FINE"
+        return redirect(url_for('index'))
+       return render_template('create_campaign.html')
     @app.route('/donate/<int:id>', methods=['POST'])
     def donate(id):
         campaign = Campaign.query.get_or_404(id)
